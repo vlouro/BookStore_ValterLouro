@@ -23,6 +23,6 @@ struct Book : Codable {
     let volumeInfo: VolumeInfo
     let saleInfo: SaleInfo
     let accessInfo: AccessInfo
-    let searchInfo: SearchInfo
+    let searchInfo: SearchInfo?
 }
 

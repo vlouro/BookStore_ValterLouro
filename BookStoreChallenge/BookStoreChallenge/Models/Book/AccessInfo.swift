@@ -25,5 +25,5 @@ struct Epub: Codable {
 
 struct Pdf: Codable {
     let isAvailable: Bool
-    let acsTokenLink: String
+    let acsTokenLink: String?
 }

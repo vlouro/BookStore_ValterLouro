@@ -10,19 +10,19 @@ import Foundation
 
 struct VolumeInfo: Codable {
     let title: String
-    let authorts: [String]
-    let publisher: String
-    let publishedDate: String
-    let description: String
+    let authors: [String]
+    let publisher: String?
+    let publishedDate: String?
+    let description: String?
     let industryIdentifiers: [IndustryIdentifiers]?
     let readingModes: ReadingModes?
-    let pageCount: Int
+    let pageCount: Int?
     let printType: String
     let categories: [String]?
     let maturityRating: String?
-    let allowAnonLoggin: Bool
+    let allowAnonLogging: Bool
     let contentVersion: String
-    let panelizationSummary: PanelizationSummary
+    let panelizationSummary: PanelizationSummary?
     let imageLinks: ImageLinks?
     let language: String
     let previewLink: String
@@ -46,6 +46,6 @@ struct PanelizationSummary: Codable {
 }
 
 struct ImageLinks: Codable {
-    let smallThumbnail: Bool
-    let thumbnail: Bool
+    let smallThumbnail: String
+    let thumbnail: String
 }
