@@ -80,7 +80,7 @@ class NetworkRequests: BooksRequestProtocol {
         var books: [Book] = []
         var hasError: Bool = false
         
-        self.dataRequest(with: "https://www.googleapis.com/books/v1/volumes?q=flowers+inauthor:keyes&key=AIzaSyCNjYq8wbW4Ee-VC4XxmChq3lvMpgLQC3Y", objectType: BooksApiResponse.self) { (result: Result) in
+        self.dataRequest(with: "https://www.googleapis.com/books/v1/volumes?q=quilting&key=AIzaSyCNjYq8wbW4Ee-VC4XxmChq3lvMpgLQC3Y", objectType: BooksApiResponse.self) { (result: Result) in
             switch result {
             case .success(let object):
                 print(object)

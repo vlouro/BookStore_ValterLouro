@@ -17,6 +17,8 @@ class BookViewModel: NSObject {
         }
     }
     
+    var bookModels: [Book] = []
+    
     private var bookRequestService: BooksRequestProtocol
     
     init(bookRequestService: BooksRequestProtocol = NetworkRequests()) {
@@ -35,8 +37,9 @@ class BookViewModel: NSObject {
             }
             
             var vms = [BookCellViewModel]()
+            self.bookModels.append(contentsOf: result)
             
-            for book in result {
+            for book in self.bookModels {
                 vms.append(self.createBookCellModel(book: book))
             }
             
