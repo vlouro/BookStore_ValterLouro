@@ -20,6 +20,8 @@ class BooksViewController: UIViewController {
         collectionview.translatesAutoresizingMaskIntoConstraints = false
         return collectionview
     }()
+    var isLoadMore = false
+    var isWaiting = false
     
     lazy var bookViewModel = {
         BookViewModel()
@@ -28,7 +30,7 @@ class BooksViewController: UIViewController {
     override func viewDidLoad() {
         self.setupNavigationBar()
         self.setupViews()
-        self.initViewModel()
+        self.getViewModelData()
     }
     
     //MARK: SETUP VIEW
@@ -48,15 +50,17 @@ class BooksViewController: UIViewController {
         ])
     }
     
-    func initViewModel() {
+    func getViewModelData() {
         bookViewModel.getBooksData()
         bookViewModel.reloadCollectionView = { [weak self] in
             DispatchQueue.main.async {
                 self?.bookCollectionView.reloadData()
+                self?.isWaiting = false
             }
         }
     }
     
+
     func setupNavigationBar() {
         self.navigationController?.appearanceNavigation()
         self.title = "Books"
@@ -80,8 +84,15 @@ extension BooksViewController: UICollectionViewDataSource {
     
     func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
         let detailbookViewController = BookDetailViewController()
-        detailbookViewController.book = self.bookViewModel.bookModels[indexPath.row]
+        detailbookViewController.book = self.bookViewModel.bookCellViewModels[indexPath.row]
         self.navigationController?.pushViewController(detailbookViewController, animated: true)
+    }
+    
+    func collectionView(_ collectionView: UICollectionView, willDisplay cell: UICollectionViewCell, forItemAt indexPath: IndexPath) {
+        if indexPath.row == self.bookViewModel.bookCellViewModels.count - 2 && !isWaiting {
+            isWaiting = true
+            self.getViewModelData()
+        }
     }
 }
 

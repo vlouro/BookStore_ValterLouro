@@ -10,7 +10,7 @@ import UIKit
 
 class BookDetailViewController : UIViewController, UIScrollViewDelegate {
     
-    var book : Book?
+    var book : BookCellViewModel?
     var isFavorite = false
     var clickedFavorite = false
     
@@ -142,9 +142,9 @@ class BookDetailViewController : UIViewController, UIScrollViewDelegate {
             self.buyButton.bottomAnchor.constraint(equalTo: scrollView.bottomAnchor, constant: -16)
         ])
        
-        self.booktitleLabel.text = book?.volumeInfo.title
+        self.booktitleLabel.text = book?.bookTitle
 
-        if let authors = book?.volumeInfo.authors {
+        if let authors = book?.authors {
             var authorsStr = ""
             for author in authors {
                 authorsStr = authorsStr + "\(author),"
@@ -155,9 +155,9 @@ class BookDetailViewController : UIViewController, UIScrollViewDelegate {
             self.authorLabel.text = "No author name available"
         }
     
-        self.descriptionLabel.text = book?.volumeInfo.description
+        self.descriptionLabel.text = book?.description
         
-        if let _ = book?.saleInfo.buyLink {
+        if let _ = book?.buyLink {
             self.buyButton.isHidden = false
             self.buyButton.addTarget(self, action: #selector(buttonAction), for: .touchUpInside)
         } else {
@@ -168,7 +168,7 @@ class BookDetailViewController : UIViewController, UIScrollViewDelegate {
     
     @objc func buttonAction(sender: UIButton!){
         
-        guard let bookBuyLink = book?.saleInfo.buyLink else {
+        guard let bookBuyLink = book?.buyLink else {
             return
         }
         

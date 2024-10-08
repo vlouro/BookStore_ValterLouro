@@ -17,7 +17,7 @@ enum NetworkError: Error {
 }
 
 protocol BooksRequestProtocol {
-    func getBooks(completion: @escaping ([Book]?, Bool) -> Void)
+    func getBooks(url: String, completion: @escaping ([Book]?, Bool) -> Void)
 }
 
 class NetworkRequests: BooksRequestProtocol {
@@ -76,11 +76,11 @@ class NetworkRequests: BooksRequestProtocol {
         task.resume()
     }
     
-    func getBooks(completion: @escaping ([Book]?, Bool) -> Void) {
+    func getBooks(url: String, completion: @escaping ([Book]?, Bool) -> Void) {
         var books: [Book] = []
         var hasError: Bool = false
         
-        self.dataRequest(with: "https://www.googleapis.com/books/v1/volumes?q=quilting&key=AIzaSyCNjYq8wbW4Ee-VC4XxmChq3lvMpgLQC3Y", objectType: BooksApiResponse.self) { (result: Result) in
+        self.dataRequest(with: url, objectType: BooksApiResponse.self) { (result: Result) in
             switch result {
             case .success(let object):
                 print(object)

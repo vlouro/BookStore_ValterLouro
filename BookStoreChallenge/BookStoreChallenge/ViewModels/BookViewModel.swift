@@ -10,6 +10,8 @@ import Foundation
 class BookViewModel: NSObject {
     
     var reloadCollectionView: (() -> Void)?
+    var startIndex = 0
+    var shouldStopGetData = false
     
     var bookCellViewModels = [BookCellViewModel]() {
         didSet {
@@ -28,7 +30,8 @@ class BookViewModel: NSObject {
     //MARK: Get Book Data
     func getBooksData() {
         var error = false
-        NetworkRequests.shared.getBooks { result, error in
+        let url = String(format: NetworkConstants.bookUrl, NetworkConstants.searchParameter, startIndex)
+        NetworkRequests.shared.getBooks(url: url) { result, error in
             
             if error { return }
             
@@ -36,15 +39,18 @@ class BookViewModel: NSObject {
                 return
             }
             
-            var vms = [BookCellViewModel]()
-            self.bookModels.append(contentsOf: result)
+            if result.count == 0 {
+                return
+            }
             
-            for book in self.bookModels {
+            var vms = [BookCellViewModel]()
+            
+            for book in result {
                 vms.append(self.createBookCellModel(book: book))
             }
             
             self.bookCellViewModels.append(contentsOf: vms)
-            
+            self.startIndex += 10
             print(self.bookCellViewModels)
         }
     }
@@ -55,7 +61,10 @@ class BookViewModel: NSObject {
         let selfLink = book.selfLink
         let bookTitle = book.volumeInfo.title
         let smallThumbnailUrl = book.volumeInfo.imageLinks?.smallThumbnail
-        return BookCellViewModel(thumbnailUrl: thumbnailUrl, smallThumbnailUrl: smallThumbnailUrl, bookId: bookId, bookTitle: bookTitle, selfLink: selfLink)
+        let buyLink = book.saleInfo.buyLink
+        let description = book.volumeInfo.description
+        let authors = book.volumeInfo.authors
+        return BookCellViewModel(thumbnailUrl: thumbnailUrl, smallThumbnailUrl: smallThumbnailUrl, bookId: bookId, bookTitle: bookTitle, selfLink: selfLink, buyLink: buyLink, description: description, authors: authors)
     }
     
 }
