@@ -127,7 +127,7 @@ class BookDetailViewController : UIViewController, UIScrollViewDelegate {
     
     func checkFavorite()  {
         guard let bookid = self.book?.bookId else { return }
-        if CoreDataManager.shared.checkIsFavorite(bookId: bookid) {
+        if BookDatabase.shared.checkIsFavorite(bookId: bookid) {
             self.isFavorite = true
             self.favoriteText = "Remove Favorite"
         } else {
@@ -193,12 +193,12 @@ class BookDetailViewController : UIViewController, UIScrollViewDelegate {
         
         if self.isFavorite {
             guard let book = self.book else {return}
-            CoreDataManager.shared.deleteItemWithIndex(bookId: book.bookId)
+            BookDatabase.shared.deleteItemWithIndex(bookId: book.bookId)
             self.isFavorite = false
             self.favoriteText = "Add Favorite"
         } else {
             guard let book = self.book else {return}
-            CoreDataManager.shared.saveBook(book: book)
+            BookDatabase.shared.saveBook(book: book)
             self.isFavorite = true
             self.favoriteText = "Remove Favorite"
         }

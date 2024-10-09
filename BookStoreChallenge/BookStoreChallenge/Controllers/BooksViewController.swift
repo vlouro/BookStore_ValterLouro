@@ -11,7 +11,7 @@ import UIKit
 class BooksViewController: UIViewController {
     
     let cellIdentifier = "BookCollectionViewCell"
-    let bookCollectionView: UICollectionView = {
+    lazy var bookCollectionView: UICollectionView = {
         let layout = UICollectionViewFlowLayout()
         layout.scrollDirection = .vertical
         let collectionview = UICollectionView(frame: .zero, collectionViewLayout: layout)
@@ -20,12 +20,27 @@ class BooksViewController: UIViewController {
         collectionview.translatesAutoresizingMaskIntoConstraints = false
         return collectionview
     }()
+    
+    lazy var noDatalabel : UILabel = {
+        let label = UILabel ()
+        label.textColor = .black
+        label.textAlignment = .center
+        label.font = UIFont.preferredFont(forTextStyle: UIFont.TextStyle.title1)
+        label.numberOfLines = 1
+        label.adjustsFontSizeToFitWidth = true
+        label.minimumScaleFactor = 0.3
+        label.text = "Nenhum livro encontrado"
+        label.isHidden = true
+        label.sizeToFit()
+        label.translatesAutoresizingMaskIntoConstraints = false
+        return label
+    }()
+    
     var isLoadMore = false
     var isWaiting = false
     var changeListText = "Favoritos"
     var isFavoriteList = false
-    
-    
+   
     lazy var bookViewModel = {
         BookViewModel()
     }()
@@ -45,12 +60,17 @@ class BooksViewController: UIViewController {
         self.bookCollectionView.dataSource = self
         self.bookCollectionView.register(BookViewCell.self, forCellWithReuseIdentifier: cellIdentifier)
         self.view.addSubview(bookCollectionView)
+        self.view.addSubview(noDatalabel)
         
         NSLayoutConstraint.activate([
             bookCollectionView.topAnchor.constraint(equalTo: self.view.layoutMarginsGuide.topAnchor),
             bookCollectionView.bottomAnchor.constraint(equalTo: self.view.layoutMarginsGuide.bottomAnchor),
             bookCollectionView.leftAnchor.constraint(equalTo: self.view.leftAnchor),
-            bookCollectionView.rightAnchor.constraint(equalTo: self.view.rightAnchor)
+            bookCollectionView.rightAnchor.constraint(equalTo: self.view.rightAnchor),
+            noDatalabel.centerYAnchor.constraint(equalTo: self.view.centerYAnchor),
+            noDatalabel.heightAnchor.constraint(equalToConstant: 60),
+            noDatalabel.leftAnchor.constraint(equalTo: self.view.leftAnchor),
+            noDatalabel.rightAnchor.constraint(equalTo: self.view.rightAnchor)
         ])
     }
     
@@ -60,6 +80,7 @@ class BooksViewController: UIViewController {
             DispatchQueue.main.async {
                 self?.bookCollectionView.reloadData()
                 self?.isWaiting = false
+                self?.checkNoBooksLabel()
             }
         }
     }
@@ -75,6 +96,7 @@ class BooksViewController: UIViewController {
             self.bookViewModel.bookCellFavoriteViewModels.removeAll()
             self.bookViewModel.getFavorites()
             self.bookCollectionView.reloadData()
+            self.checkNoBooksLabel()
         }
         
     }
@@ -98,8 +120,17 @@ class BooksViewController: UIViewController {
             }
         }
         
+        checkNoBooksLabel()
         if let item = self.navigationItem.rightBarButtonItem {
             item.title = self.changeListText
+        }
+    }
+    
+    func checkNoBooksLabel() {
+        if self.bookViewModel.bookCellViewModels.isEmpty && !self.isFavoriteList || self.bookViewModel.bookCellFavoriteViewModels.isEmpty && self.isFavoriteList {
+            self.noDatalabel.isHidden = false
+        } else {
+            self.noDatalabel.isHidden = true
         }
     }
 }

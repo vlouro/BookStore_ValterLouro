@@ -57,7 +57,7 @@ class BookViewModel: NSObject {
     
     func getFavorites() {
         self.bookCellFavoriteViewModels.removeAll()
-        let favoriteBooks = CoreDataManager.shared.loadBooks()
+        let favoriteBooks = BookDatabase.shared.loadBooks()
         self.bookCellFavoriteViewModels.append(contentsOf: favoriteBooks)
     }
     

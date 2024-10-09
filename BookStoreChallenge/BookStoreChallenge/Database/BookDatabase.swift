@@ -8,8 +8,8 @@ import Foundation
 import UIKit
 import CoreData
 
-class CoreDataManager {
-    static let shared = CoreDataManager()
+class BookDatabase {
+    static let shared = BookDatabase()
     private init() {}
     
     private lazy var persistentContainer: NSPersistentContainer = {
@@ -30,7 +30,7 @@ class CoreDataManager {
     
     func loadBooks() -> [BookCellViewModel] {
         var favoriteBooks: [BookCellViewModel] = []
-        let mainContext = CoreDataManager.shared.mainContext
+        let mainContext = BookDatabase.shared.mainContext
         let fetchRequest: NSFetchRequest<FavoriteBook> = FavoriteBook.fetchRequest()
         do {
             let results = try mainContext.fetch(fetchRequest)
@@ -49,7 +49,7 @@ class CoreDataManager {
     
     func saveBook(book: BookCellViewModel) {
         DispatchQueue.main.async {
-            let mainContext = CoreDataManager.shared.mainContext
+            let mainContext = BookDatabase.shared.mainContext
             do{
                 let entity = FavoriteBook.entity()
                 let favoriteBook = FavoriteBook(entity: entity, insertInto: mainContext)
@@ -70,7 +70,7 @@ class CoreDataManager {
     
     func deleteItemWithIndex(bookId: String)  {
         DispatchQueue.main.async {
-            let mainContext = CoreDataManager.shared.mainContext
+            let mainContext = BookDatabase.shared.mainContext
             let fetchRequest: NSFetchRequest<FavoriteBook> = FavoriteBook.fetchRequest()
             do {
                 fetchRequest.predicate = NSPredicate(format:"bookId == %@",bookId)
@@ -98,13 +98,13 @@ class CoreDataManager {
     
     func checkIsFavorite(bookId: String) -> Bool {
         
-        let mainContext = CoreDataManager.shared.mainContext
+        let mainContext = BookDatabase.shared.mainContext
         let fetchRequest: NSFetchRequest<FavoriteBook> = FavoriteBook.fetchRequest()
         do {
         
             fetchRequest.predicate = NSPredicate(format:"bookId == %@",bookId)
             fetchRequest.includesPropertyValues = false
-            // Perform the fetch request
+            
             let results = try mainContext.fetch(fetchRequest)
             
             if results.count >= 1 {
