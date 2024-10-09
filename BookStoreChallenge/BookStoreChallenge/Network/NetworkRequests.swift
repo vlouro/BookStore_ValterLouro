@@ -83,7 +83,6 @@ class NetworkRequests: BooksRequestProtocol {
         self.dataRequest(with: url, objectType: BooksApiResponse.self) { (result: Result) in
             switch result {
             case .success(let object):
-                print(object)
                 if let booksArr = object.items, booksArr.count > 0 {
                     books.append(contentsOf: booksArr)
                 }

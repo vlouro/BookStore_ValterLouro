@@ -15,5 +15,5 @@ struct BookCellViewModel {
     let selfLink: String
     let buyLink: String?
     let description: String?
-    let authors: [String]?
+    let authors: String?
 }

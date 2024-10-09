@@ -22,6 +22,9 @@ class BooksViewController: UIViewController {
     }()
     var isLoadMore = false
     var isWaiting = false
+    var changeListText = "Favoritos"
+    var isFavoriteList = false
+    
     
     lazy var bookViewModel = {
         BookViewModel()
@@ -36,6 +39,7 @@ class BooksViewController: UIViewController {
     //MARK: SETUP VIEW
     func setupViews() {
         
+        self.navigationItem.rightBarButtonItem = UIBarButtonItem(title: changeListText, style: .plain, target: self, action: #selector(changeList))
         self.view.backgroundColor = .white
         self.bookCollectionView.delegate = self
         self.bookCollectionView.dataSource = self
@@ -65,31 +69,65 @@ class BooksViewController: UIViewController {
         self.navigationController?.appearanceNavigation()
         self.title = "Books"
     }
-}
-
-extension BooksViewController: UICollectionViewDelegate {
     
+    @objc func reloadFavoriteList(notification: NSNotification) {
+        DispatchQueue.main.async {
+            self.bookViewModel.bookCellFavoriteViewModels.removeAll()
+            self.bookViewModel.getFavorites()
+            self.bookCollectionView.reloadData()
+        }
+        
+    }
+    
+    @objc func changeList() {
+
+        if !isFavoriteList {
+            self.isFavoriteList = true
+            self.changeListText = "Lista"
+            NotificationCenter.default.addObserver(self, selector: #selector(reloadFavoriteList(notification:)), name: NSNotification.Name(rawValue: "ReloadFavoriteList"), object: nil)
+            self.bookViewModel.getFavorites()
+            self.bookCollectionView.reloadData()
+        } else {
+            self.isFavoriteList = false
+            self.changeListText = "Favoritos"
+            NotificationCenter.default.removeObserver(self, name: NSNotification.Name(rawValue: "ReloadFavoriteList"), object: nil)
+            if self.bookViewModel.bookCellViewModels.isEmpty {
+                self.bookViewModel.getBooksData()
+            } else {
+                self.bookCollectionView.reloadData()
+            }
+        }
+        
+        if let item = self.navigationItem.rightBarButtonItem {
+            item.title = self.changeListText
+        }
+    }
 }
 
 extension BooksViewController: UICollectionViewDataSource {
     func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
-        self.bookViewModel.bookCellViewModels.count
+        if isFavoriteList {
+            self.bookViewModel.bookCellFavoriteViewModels.count
+        } else {
+            self.bookViewModel.bookCellViewModels.count
+        }
+        
     }
     
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
         let cell = bookCollectionView.dequeueReusableCell(withReuseIdentifier: cellIdentifier, for: indexPath) as! BookViewCell
-        cell.cellViewModel = self.bookViewModel.bookCellViewModels[indexPath.row]
+        cell.cellViewModel = self.isFavoriteList ? self.bookViewModel.bookCellFavoriteViewModels[indexPath.row] : self.bookViewModel.bookCellViewModels[indexPath.row]
         return cell
     }
     
     func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
         let detailbookViewController = BookDetailViewController()
-        detailbookViewController.book = self.bookViewModel.bookCellViewModels[indexPath.row]
+        detailbookViewController.book = self.isFavoriteList ? self.bookViewModel.bookCellFavoriteViewModels[indexPath.row] : self.bookViewModel.bookCellViewModels[indexPath.row]
         self.navigationController?.pushViewController(detailbookViewController, animated: true)
     }
     
     func collectionView(_ collectionView: UICollectionView, willDisplay cell: UICollectionViewCell, forItemAt indexPath: IndexPath) {
-        if indexPath.row == self.bookViewModel.bookCellViewModels.count - 2 && !isWaiting {
+        if indexPath.row == self.bookViewModel.bookCellViewModels.count - 2 && !isWaiting && !isFavoriteList {
             isWaiting = true
             self.getViewModelData()
         }

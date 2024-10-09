@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<model type="com.apple.IDECoreDataModeler.DataModel" documentVersion="1.0" lastSavedToolsVersion="23231" systemVersion="24A335" minimumToolsVersion="Automatic" sourceLanguage="Swift" usedWithSwiftData="YES" userDefinedModelVersionIdentifier="">
+    <entity name="FavoriteBook" representedClassName="FavoriteBook" syncable="YES" codeGenerationType="class">
+        <attribute name="authors" optional="YES" attributeType="String" valueTransformerName="NSSecureUnarchiveFromDataTransformer"/>
+        <attribute name="bookId" optional="YES" attributeType="String"/>
+        <attribute name="bookTitle" optional="YES" attributeType="String"/>
+        <attribute name="buyLink" optional="YES" attributeType="String"/>
+        <attribute name="descriptionBook" optional="YES" attributeType="String"/>
+        <attribute name="selfLink" optional="YES" attributeType="String"/>
+        <attribute name="smallThumbnailUrl" optional="YES" attributeType="String"/>
+    </entity>
+</model>

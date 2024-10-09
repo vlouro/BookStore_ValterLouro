@@ -19,6 +19,8 @@ class BookViewModel: NSObject {
         }
     }
     
+    var bookCellFavoriteViewModels = [BookCellViewModel]()
+    
     var bookModels: [Book] = []
     
     private var bookRequestService: BooksRequestProtocol
@@ -29,7 +31,6 @@ class BookViewModel: NSObject {
     
     //MARK: Get Book Data
     func getBooksData() {
-        var error = false
         let url = String(format: NetworkConstants.bookUrl, NetworkConstants.searchParameter, startIndex)
         NetworkRequests.shared.getBooks(url: url) { result, error in
             
@@ -51,8 +52,13 @@ class BookViewModel: NSObject {
             
             self.bookCellViewModels.append(contentsOf: vms)
             self.startIndex += 10
-            print(self.bookCellViewModels)
         }
+    }
+    
+    func getFavorites() {
+        self.bookCellFavoriteViewModels.removeAll()
+        let favoriteBooks = CoreDataManager.shared.loadBooks()
+        self.bookCellFavoriteViewModels.append(contentsOf: favoriteBooks)
     }
     
     func createBookCellModel(book: Book) -> BookCellViewModel {
@@ -63,7 +69,15 @@ class BookViewModel: NSObject {
         let smallThumbnailUrl = book.volumeInfo.imageLinks?.smallThumbnail
         let buyLink = book.saleInfo.buyLink
         let description = book.volumeInfo.description
-        let authors = book.volumeInfo.authors
+        var authors = ""
+        if let authorsString = book.volumeInfo.authors {
+            var authorsStr = ""
+            for author in authorsString {
+                authorsStr = authorsStr + "\(author), "
+            }
+            authorsStr = String(authorsStr.dropLast(2))
+            authors = authorsStr
+        }
         return BookCellViewModel(thumbnailUrl: thumbnailUrl, smallThumbnailUrl: smallThumbnailUrl, bookId: bookId, bookTitle: bookTitle, selfLink: selfLink, buyLink: buyLink, description: description, authors: authors)
     }
     

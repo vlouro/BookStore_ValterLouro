@@ -11,8 +11,8 @@ import UIKit
 class BookDetailViewController : UIViewController, UIScrollViewDelegate {
     
     var book : BookCellViewModel?
-    var isFavorite = false
-    var clickedFavorite = false
+    var isFavorite: Bool = false
+    var favoriteText = "Add Favorite"
     
     let scrollView: UIScrollView = {
         let scrollView = UIScrollView(frame: CGRect(x: 0, y: 0, width: UIScreen.main.bounds.size.width, height: UIScreen.main.bounds.size.height))
@@ -93,11 +93,12 @@ class BookDetailViewController : UIViewController, UIScrollViewDelegate {
         super.viewDidLoad()
 
         // Do any additional setup after loading the view.
-        self.navigationItem.rightBarButtonItem = UIBarButtonItem(title: "Favorite", style: .plain, target: self, action: #selector(addFavorite))
+        self.navigationItem.rightBarButtonItem = UIBarButtonItem(title: favoriteText, style: .plain, target: self, action: #selector(addFavorite))
         self.view.backgroundColor = UIColor.white
         self.scrollView.delegate = self
         self.setupViews()
         self.setupLabelsInformation()
+        self.checkFavorite()
     }
 
     func setupViews(){
@@ -124,6 +125,21 @@ class BookDetailViewController : UIViewController, UIScrollViewDelegate {
         self.contentView.addSubview(buyButton)
     }
     
+    func checkFavorite()  {
+        guard let bookid = self.book?.bookId else { return }
+        if CoreDataManager.shared.checkIsFavorite(bookId: bookid) {
+            self.isFavorite = true
+            self.favoriteText = "Remove Favorite"
+        } else {
+            self.isFavorite = false
+            self.favoriteText = "Add Favorite"
+        }
+        
+        if let item = self.navigationItem.rightBarButtonItem {
+            item.title = self.favoriteText
+        }
+    }
+    
     func setupLabelsInformation(){
         NSLayoutConstraint.activate([
             self.booktitleLabel.leftAnchor.constraint(equalTo: contentView.leftAnchor, constant: 16),
@@ -144,13 +160,8 @@ class BookDetailViewController : UIViewController, UIScrollViewDelegate {
        
         self.booktitleLabel.text = book?.bookTitle
 
-        if let authors = book?.authors {
-            var authorsStr = ""
-            for author in authors {
-                authorsStr = authorsStr + "\(author),"
-            }
-            authorsStr = String(authorsStr.dropLast())
-            self.authorLabel.text = authorsStr
+        if let authors = book?.authors, !authors.isEmpty {
+            self.authorLabel.text = authors
         } else {
             self.authorLabel.text = "No author name available"
         }
@@ -178,7 +189,25 @@ class BookDetailViewController : UIViewController, UIScrollViewDelegate {
     }
     
     
-    @objc func addFavorite(){
+    @objc func addFavorite() {
         
+        if self.isFavorite {
+            guard let book = self.book else {return}
+            CoreDataManager.shared.deleteItemWithIndex(bookId: book.bookId)
+            self.isFavorite = false
+            self.favoriteText = "Add Favorite"
+        } else {
+            guard let book = self.book else {return}
+            CoreDataManager.shared.saveBook(book: book)
+            self.isFavorite = true
+            self.favoriteText = "Remove Favorite"
+        }
+            
+        if let item = self.navigationItem.rightBarButtonItem {
+            item.title = self.favoriteText
+        }
+        
+        NotificationCenter.default.post(name: NSNotification.Name("ReloadFavoriteList"), object: nil)
+
     }
 }
