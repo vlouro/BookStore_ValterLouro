@@ -40,7 +40,7 @@ class BooksViewController: UIViewController {
     var isWaiting = false
     var changeListText = "Favoritos"
     var isFavoriteList = false
-   
+    
     lazy var bookViewModel = {
         BookViewModel()
     }()
@@ -53,7 +53,6 @@ class BooksViewController: UIViewController {
     
     //MARK: SETUP VIEW
     func setupViews() {
-        
         self.navigationItem.rightBarButtonItem = UIBarButtonItem(title: changeListText, style: .plain, target: self, action: #selector(changeList))
         self.view.backgroundColor = .white
         self.bookCollectionView.delegate = self
@@ -74,6 +73,12 @@ class BooksViewController: UIViewController {
         ])
     }
     
+    func setupNavigationBar() {
+        self.navigationController?.appearanceNavigation()
+        self.title = "Books"
+    }
+    
+    //MARK: Load Books
     func getViewModelData() {
         bookViewModel.getBooksData()
         bookViewModel.reloadCollectionView = { [weak self] in
@@ -85,12 +90,7 @@ class BooksViewController: UIViewController {
         }
     }
     
-
-    func setupNavigationBar() {
-        self.navigationController?.appearanceNavigation()
-        self.title = "Books"
-    }
-    
+    //MARK: Reload Favorites
     @objc func reloadFavoriteList(notification: NSNotification) {
         DispatchQueue.main.async {
             self.bookViewModel.bookCellFavoriteViewModels.removeAll()
@@ -98,11 +98,11 @@ class BooksViewController: UIViewController {
             self.bookCollectionView.reloadData()
             self.checkNoBooksLabel()
         }
-        
     }
     
+    //MARK: Change Lists
     @objc func changeList() {
-
+        
         if !isFavoriteList {
             self.isFavoriteList = true
             self.changeListText = "Lista"
@@ -126,6 +126,7 @@ class BooksViewController: UIViewController {
         }
     }
     
+    //MARK: No Books
     func checkNoBooksLabel() {
         if self.bookViewModel.bookCellViewModels.isEmpty && !self.isFavoriteList || self.bookViewModel.bookCellFavoriteViewModels.isEmpty && self.isFavoriteList {
             self.noDatalabel.isHidden = false
@@ -135,6 +136,7 @@ class BooksViewController: UIViewController {
     }
 }
 
+//MARK: CollectionViewDataSource
 extension BooksViewController: UICollectionViewDataSource {
     func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
         if isFavoriteList {
@@ -142,7 +144,6 @@ extension BooksViewController: UICollectionViewDataSource {
         } else {
             self.bookViewModel.bookCellViewModels.count
         }
-        
     }
     
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
@@ -165,9 +166,10 @@ extension BooksViewController: UICollectionViewDataSource {
     }
 }
 
+//MARK: CollectionViewDelegateFlowLayout
 extension BooksViewController: UICollectionViewDelegateFlowLayout {
     func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAt indexPath: IndexPath) -> CGSize {
-
+        
         let columns: CGFloat = 2
         let collectionViewWidth = collectionView.bounds.width
         let flowLayout = collectionViewLayout as! UICollectionViewFlowLayout

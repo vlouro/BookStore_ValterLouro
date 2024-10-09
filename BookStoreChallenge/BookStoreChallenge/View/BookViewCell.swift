@@ -14,11 +14,10 @@ class BookViewCell: UICollectionViewCell {
     var cellViewModel: BookCellViewModel? {
         didSet {
             if let thumbnailUrl = cellViewModel?.thumbnailUrl {
-                imageView.imageFromServerURL(urlString: thumbnailUrl, PlaceHolderImage: UIImage())
+                imageView.imageFromServerURL(urlString: thumbnailUrl, PlaceHolderImage: UIImage(named:"no_image_icon") ?? UIImage())
             } else {
-                imageView.image = UIImage()
+                imageView.image = UIImage(named:"no_image_icon")
             }
-            
         }
     }
     
@@ -27,16 +26,16 @@ class BookViewCell: UICollectionViewCell {
             imageView
         ])
         stackView.axis = .vertical
-        // enables auto layout
         stackView.translatesAutoresizingMaskIntoConstraints = false
         addSubview(stackView)
         
-        //stackView layout
-        stackView.topAnchor.constraint(equalTo: topAnchor).isActive = true
-        stackView.leadingAnchor.constraint(equalTo: leadingAnchor).isActive = true
-        stackView.bottomAnchor.constraint(equalTo: bottomAnchor).isActive = true
-        stackView.trailingAnchor.constraint(equalTo: trailingAnchor).isActive = true
-        
+        //StackView layout
+        NSLayoutConstraint.activate([
+            stackView.topAnchor.constraint(equalTo: topAnchor),
+            stackView.leadingAnchor.constraint(equalTo: leadingAnchor),
+            stackView.bottomAnchor.constraint(equalTo: bottomAnchor),
+            stackView.trailingAnchor.constraint(equalTo: trailingAnchor)
+        ])
     }
     
     override init(frame: CGRect) {

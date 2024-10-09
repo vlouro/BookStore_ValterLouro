@@ -39,9 +39,7 @@ class BookDatabase {
                 let book = BookCellViewModel(thumbnailUrl: result.smallThumbnailUrl ?? "", smallThumbnailUrl: result.smallThumbnailUrl, bookId: result.bookId ?? "", bookTitle: result.bookTitle ?? "", selfLink: result.selfLink ?? "", buyLink: result.buyLink, description: result.descriptionBook, authors: result.authors)
                 favoriteBooks.append(book)
             }
-            
-        }
-        catch {
+        } catch {
             debugPrint(error)
         }
         return favoriteBooks
@@ -61,9 +59,8 @@ class BookDatabase {
                 favoriteBook.descriptionBook = book.description
                 favoriteBook.authors = book.authors
                 try mainContext.save()
-                }  catch {
+            }  catch {
                 debugPrint(error)
-              
             }
         }
     }
@@ -74,24 +71,14 @@ class BookDatabase {
             let fetchRequest: NSFetchRequest<FavoriteBook> = FavoriteBook.fetchRequest()
             do {
                 fetchRequest.predicate = NSPredicate(format:"bookId == %@",bookId)
-
-                // Setting includesPropertyValues to false means
-                // the fetch request will only get the managed
-                // object ID for each object
                 fetchRequest.includesPropertyValues = false
-                // Perform the fetch request
                 let objects = try mainContext.fetch(fetchRequest)
-                
-                // Delete the objects
                 for object in objects {
                     mainContext.delete(object)
                 }
-
-                // Save the deletions to the persistent store
                 try mainContext.save()
-                
             } catch {
-                
+                debugPrint(error)
             }
         }
     }
@@ -101,7 +88,6 @@ class BookDatabase {
         let mainContext = BookDatabase.shared.mainContext
         let fetchRequest: NSFetchRequest<FavoriteBook> = FavoriteBook.fetchRequest()
         do {
-        
             fetchRequest.predicate = NSPredicate(format:"bookId == %@",bookId)
             fetchRequest.includesPropertyValues = false
             
@@ -112,10 +98,9 @@ class BookDatabase {
             } else {
                 return false
             }
-        }  catch {
+        } catch {
             debugPrint(error)
             return false
         }
     }
-    
 }

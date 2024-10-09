@@ -8,11 +8,22 @@
 import Foundation
 
 class BookViewModel: NSObject {
+    private var apiKey: String {
+      get {
+        guard let filePath = Bundle.main.path(forResource: "SecureKeys", ofType: "plist") else {
+          fatalError("Couldn't find file 'SecureKeys.plist'.")
+        }
+        let plist = NSDictionary(contentsOfFile: filePath)
+        guard let value = plist?.object(forKey: "API_KEY") as? String else {
+          fatalError("Couldn't find key 'API_KEY' in 'SecureKeys.plist'.")
+        }
+        return value
+      }
+    }
     
     var reloadCollectionView: (() -> Void)?
     var startIndex = 0
     var shouldStopGetData = false
-    
     var bookCellViewModels = [BookCellViewModel]() {
         didSet {
             reloadCollectionView?()
@@ -20,9 +31,7 @@ class BookViewModel: NSObject {
     }
     
     var bookCellFavoriteViewModels = [BookCellViewModel]()
-    
     var bookModels: [Book] = []
-    
     private var bookRequestService: BooksRequestProtocol
     
     init(bookRequestService: BooksRequestProtocol = NetworkRequests()) {
@@ -31,7 +40,7 @@ class BookViewModel: NSObject {
     
     //MARK: Get Book Data
     func getBooksData() {
-        let url = String(format: NetworkConstants.bookUrl, NetworkConstants.searchParameter, startIndex)
+        let url = String(format: NetworkConstants.bookUrl, NetworkConstants.searchParameter, startIndex, self.apiKey)
         NetworkRequests.shared.getBooks(url: url) { result, error in
             
             if error { return }
@@ -55,12 +64,14 @@ class BookViewModel: NSObject {
         }
     }
     
+    //MARK: Get Favorites
     func getFavorites() {
         self.bookCellFavoriteViewModels.removeAll()
         let favoriteBooks = BookDatabase.shared.loadBooks()
         self.bookCellFavoriteViewModels.append(contentsOf: favoriteBooks)
     }
     
+    //MARK: Create Book Cell Model
     func createBookCellModel(book: Book) -> BookCellViewModel {
         let thumbnailUrl = book.volumeInfo.imageLinks?.thumbnail
         let bookId = book.id

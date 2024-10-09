@@ -22,5 +22,4 @@ extension UINavigationController {
         navigationBar.compactAppearance = appearance.copy()
         navigationBar.compactScrollEdgeAppearance = appearance.copy()
     }
-    
 }

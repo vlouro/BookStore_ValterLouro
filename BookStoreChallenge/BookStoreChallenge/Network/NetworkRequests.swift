@@ -47,12 +47,11 @@ class NetworkRequests: BooksRequestProtocol {
             
             // declare result type
             let result: Result<T, NetworkError>
-            
             // defer the to call completion handler
             defer {
                 completion(result)
             }
-            
+
             if let error {
                 result = .failure(.networkError(error))
                 return
@@ -76,6 +75,7 @@ class NetworkRequests: BooksRequestProtocol {
         task.resume()
     }
     
+    //MARK: Get Books
     func getBooks(url: String, completion: @escaping ([Book]?, Bool) -> Void) {
         var books: [Book] = []
         var hasError: Bool = false

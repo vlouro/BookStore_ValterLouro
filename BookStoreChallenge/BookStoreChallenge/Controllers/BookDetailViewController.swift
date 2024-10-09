@@ -101,9 +101,8 @@ class BookDetailViewController : UIViewController, UIScrollViewDelegate {
         self.checkFavorite()
     }
 
-    func setupViews(){
+    func setupViews() {
         // Add views
-        
         self.view.addSubview(scrollView)
         scrollView.addSubview(contentView)
         
@@ -125,22 +124,8 @@ class BookDetailViewController : UIViewController, UIScrollViewDelegate {
         self.contentView.addSubview(buyButton)
     }
     
-    func checkFavorite()  {
-        guard let bookid = self.book?.bookId else { return }
-        if BookDatabase.shared.checkIsFavorite(bookId: bookid) {
-            self.isFavorite = true
-            self.favoriteText = "Remove Favorite"
-        } else {
-            self.isFavorite = false
-            self.favoriteText = "Add Favorite"
-        }
-        
-        if let item = self.navigationItem.rightBarButtonItem {
-            item.title = self.favoriteText
-        }
-    }
-    
-    func setupLabelsInformation(){
+    //MARK: Setup Labels Information
+    func setupLabelsInformation() {
         NSLayoutConstraint.activate([
             self.booktitleLabel.leftAnchor.constraint(equalTo: contentView.leftAnchor, constant: 16),
             self.booktitleLabel.rightAnchor.constraint(equalTo: contentView.rightAnchor, constant: -16),
@@ -174,11 +159,26 @@ class BookDetailViewController : UIViewController, UIScrollViewDelegate {
         } else {
             self.buyButton.isHidden = true
         }
-        
     }
     
-    @objc func buttonAction(sender: UIButton!){
+    //MARK: Check Favorite
+    func checkFavorite() {
+        guard let bookid = self.book?.bookId else { return }
+        if BookDatabase.shared.checkIsFavorite(bookId: bookid) {
+            self.isFavorite = true
+            self.favoriteText = "Remove Favorite"
+        } else {
+            self.isFavorite = false
+            self.favoriteText = "Add Favorite"
+        }
         
+        if let item = self.navigationItem.rightBarButtonItem {
+            item.title = self.favoriteText
+        }
+    }
+    
+    //MARK: Buy Link Action
+    @objc func buttonAction(sender: UIButton!) {
         guard let bookBuyLink = book?.buyLink else {
             return
         }
@@ -188,9 +188,8 @@ class BookDetailViewController : UIViewController, UIScrollViewDelegate {
         }
     }
     
-    
+    //MARK: Add Favorite Action
     @objc func addFavorite() {
-        
         if self.isFavorite {
             guard let book = self.book else {return}
             BookDatabase.shared.deleteItemWithIndex(bookId: book.bookId)
@@ -208,6 +207,5 @@ class BookDetailViewController : UIViewController, UIScrollViewDelegate {
         }
         
         NotificationCenter.default.post(name: NSNotification.Name("ReloadFavoriteList"), object: nil)
-
     }
 }
