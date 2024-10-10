@@ -7,4 +7,4 @@ As for the load more, sometimes the startIndex parameter brings some equal books
 
 For Improvements: The use of SwiftUI with combine for better and updated code/technology. Load more on the favorites list, for the list with requests there is a loading more while scrolling.
 
-As for the Network part, I would improve the request errors/handling, there isn't na option to retry if there is an error.
+As for the Network part, I would improve the request errors/handling, there isn't an option to retry if there is an error.
