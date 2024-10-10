@@ -80,6 +80,7 @@ class BooksViewController: UIViewController {
     
     //MARK: Load Books
     func getViewModelData() {
+        if bookViewModel.shouldStopGetData { return }
         bookViewModel.getBooksData()
         bookViewModel.reloadCollectionView = { [weak self] in
             DispatchQueue.main.async {

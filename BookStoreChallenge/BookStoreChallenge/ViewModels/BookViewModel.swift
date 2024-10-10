@@ -50,6 +50,7 @@ class BookViewModel: NSObject {
             }
             
             if result.count == 0 {
+                self.shouldStopGetData = true
                 return
             }
             
