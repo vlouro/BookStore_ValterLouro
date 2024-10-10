@@ -64,8 +64,8 @@ class BooksViewController: UIViewController {
         NSLayoutConstraint.activate([
             bookCollectionView.topAnchor.constraint(equalTo: self.view.layoutMarginsGuide.topAnchor),
             bookCollectionView.bottomAnchor.constraint(equalTo: self.view.layoutMarginsGuide.bottomAnchor),
-            bookCollectionView.leftAnchor.constraint(equalTo: self.view.leftAnchor),
-            bookCollectionView.rightAnchor.constraint(equalTo: self.view.rightAnchor),
+            bookCollectionView.leftAnchor.constraint(equalTo: self.view.leftAnchor, constant: 16),
+            bookCollectionView.rightAnchor.constraint(equalTo: self.view.rightAnchor, constant: -16),
             noDatalabel.centerYAnchor.constraint(equalTo: self.view.centerYAnchor),
             noDatalabel.heightAnchor.constraint(equalToConstant: 60),
             noDatalabel.leftAnchor.constraint(equalTo: self.view.leftAnchor),
@@ -176,7 +176,7 @@ extension BooksViewController: UICollectionViewDelegateFlowLayout {
         let spaceBetweenCells = flowLayout.minimumInteritemSpacing * (columns - 1)
         let adjustedWidth = collectionViewWidth - spaceBetweenCells
         let width: CGFloat = adjustedWidth / columns
-        let height: CGFloat = 200
+        let height: CGFloat = 300
         return CGSize(width: width, height: height)
     }
 }
